@@ -1,0 +1,12 @@
+I"�<h1 id="green-judge-backdoor">Green Judge backdoor</h1>
+<h2 id="序言">序言</h2>
+
+<p>反正這個後門是我學長告訴我說，Green Judge之前有一個沒封過的後門</p>
+
+<p>然後依照我就去找了以下他的system function可用的只有popen（我沒測過別的可用的）</p>
+
+<p>花了一個學期我學會了很多系統的技巧我才成功開後門進去</p>
+
+<h2 id="實作">實作</h2>
+
+:ET

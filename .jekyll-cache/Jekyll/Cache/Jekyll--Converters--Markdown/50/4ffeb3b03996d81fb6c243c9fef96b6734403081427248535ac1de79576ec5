@@ -1,0 +1,26 @@
+I"U<h1 id="green-judge-backdoor">Green Judge backdoor</h1>
+<h2 id="序言">序言</h2>
+
+<p>反正這個後門是我學長告訴我說，Green Judge之前有一個沒封過的後門</p>
+
+<p>然後依照我就去找了以下他的system function可用的只有popen（我沒測過別的可用的）</p>
+
+<p>花了一個學期我學會了很多系統的技巧我才成功開後門進去</p>
+
+<h2 id="實作">實作</h2>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+
+     <span class="c1">//shell command</span>
+    <span class="kt">char</span><span class="o">*</span> <span class="n">command</span><span class="o">=</span><span class="p">(</span><span class="kt">char</span><span class="o">*</span><span class="p">)</span><span class="s">"echo test"</span><span class="p">;</span>
+  
+    <span class="n">popen</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="s">"r"</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div></div>
+
+:ET
